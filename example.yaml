@@ -1,6 +1,6 @@
 # Import external component from GitHub
 external_components:
-  - source: github://beormund/esphome-samsung-nasa@main
+  - source: github://stokiloton/esphome-samsung-nasa@main
     components: [samsung_nasa]
 
 esphome:
@@ -97,13 +97,30 @@ number:
   - platform: samsung_nasa
     fsv: 2021
     nasa_device_id: nasa_device_1
-    name: Water Law (Flow Temp) High
+    name: Water Law L1 (Flow Temp) High
     id: fsv_2021
   - platform: samsung_nasa
     fsv: 2022
     nasa_device_id: nasa_device_1
-    name: Water Law (Flow Temp) Low
+    name: Water Law L1 (Flow Temp) Low
     id: fsv_2022
+  - platform: samsung_nasa
+    fsv: 2031
+    nasa_device_id: nasa_device_1
+    name: Water Law L2 (Flow Temp) High
+    id: fsv_2031
+  - platform: samsung_nasa
+    fsv: 2032
+    nasa_device_id: nasa_device_1
+    name: Water Law L2 (Flow Temp) Low
+    id: fsv_2032
+  - platform: samsung_nasa
+    message: 0x4248
+    name: Water Law Tareget Temp Correction
+    # 0x4247: "VAR_IN_TEMP_WATER_OUTLET_TARGET_F", 0x4248: "VAR_IN_TEMP_WATER_LAW_TARGET_F"
+    #internal: true
+    nasa_device_id: nasa_device_1
+    id: water_low_target_temp_corr
 
 select:
   - platform: samsung_nasa
@@ -387,7 +404,7 @@ interval:
       # number of components - they will be batched into
       # groups of up to 10 messages before being sent,
       - samsung_nasa.request_read:
-          id: [fsv_2011, fsv_2012, fsv_2021, fsv_2022]
+          id: [fsv_2011, fsv_2012, fsv_2021, fsv_2022, fsv_2031, fsv_2032]
 
 button:
   - platform: template
@@ -395,5 +412,5 @@ button:
     entity_category: config
     on_press:
       - samsung_nasa.request_read:
-          id: [fsv_2011, fsv_2012, fsv_2021, fsv_2022]
+          id: [fsv_2011, fsv_2012, fsv_2021, fsv_2022, fsv_2031, fsv_2032]
 
