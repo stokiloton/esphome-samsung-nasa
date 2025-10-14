@@ -49,8 +49,8 @@ web_server:
 
 # Specify pins used by the board to communicate over RS485
 uart:
-  tx_pin: GPIO19
-  rx_pin: GPIO22
+  tx_pin: GPIO17
+  rx_pin: GPIO16
   baud_rate: 9600
   parity: EVEN
 
