@@ -9,7 +9,8 @@ esphome:
   min_version: 2025.8.0
 
 esp32:
-  board: m5stack-atom
+  board: esp32dev
+#  board: m5stack-atom
   framework:
     # Arduino framework has faster compilation but 
     # uses more RAM and Flash; ESP-IDF framework has 
