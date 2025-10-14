@@ -37,13 +37,15 @@ selects = {
     0x4001: {
         NASA_LABEL: "ENUM_IN_OPERATION_MODE",
         NASA_MODE: CONTROLLER_MODE_CONTROL,
-        CONF_DATA: cmd_select_data(["Auto", "Cool", "Dry", "Fan", "Heat"]),
+        #CONF_DATA: cmd_select_data(["Auto", "Cool", "Dry", "Fan", "Heat"]),
+        CONF_DATA: cmd_select_data(["Auto", "Cool", "Heat"]),
         CONF_DEFAULTS: select_defaults()
     },
     0x4066: {
         NASA_LABEL: "ENUM_IN_WATER_HEATER_MODE",
         NASA_MODE: CONTROLLER_MODE_CONTROL,
-        CONF_DATA: cmd_select_data(["Economy", "Standard", "Power", "Force"]),
+        #CONF_DATA: cmd_select_data(["Economy", "Standard", "Power", "Force"]),
+        CONF_DATA: cmd_select_data(["Economy", "Standard"]),
         CONF_DEFAULTS: select_defaults()
     },
     0x406F: {
