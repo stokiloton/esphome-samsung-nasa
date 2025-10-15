@@ -4,7 +4,7 @@ external_components:
     components: [samsung_nasa]
 
 esphome:
-  name: samsung_nasa
+  name: samsung
   friendly_name: Heat Pump
   min_version: 2025.8.0
 
@@ -67,18 +67,18 @@ samsung_nasa:
      id: nasa_device_2
 
 number:
-  - platform: samsung_nasa
-    message: 0x4201
-    name: Zone 1 Target Temp
-    internal: true
-    nasa_device_id: nasa_device_1
-    id: zone_target_temp
-  - platform: samsung_nasa
-    message: 0x42D6
-    name: Zone 2 Target Temp
-    internal: true
-    nasa_device_id: nasa_device_1
-    id: zone2_target_temp
+#  - platform: samsung_nasa
+#    message: 0x4201
+#    name: Zone 1 Target Temp
+#    internal: true
+#    nasa_device_id: nasa_device_1
+#    id: zone_target_temp
+#  - platform: samsung_nasa
+#    message: 0x42D6
+#    name: Zone 2 Target Temp
+#    internal: true
+#    nasa_device_id: nasa_device_1
+#    id: zone2_target_temp
   - platform: samsung_nasa
     message: 0x4235
     name: DHW Target Temperature
@@ -88,40 +88,40 @@ number:
   - platform: samsung_nasa
     fsv: 2011
     nasa_device_id: nasa_device_1
-    name: Water Law (Outdoor Temp) High
+    name: Water Law (High Outdoor Temp)
     id: fsv_2011
   - platform: samsung_nasa
     fsv: 2012
     nasa_device_id: nasa_device_1
-    name: Water Law (Outdoor Temp) Low
+    name: Water Law (Low Outdoor Temp)
     id: fsv_2012
+ # - platform: samsung_nasa
+ #   fsv: 2021
+ #   nasa_device_id: nasa_device_1
+ #   name: Water Law (High Flow Temp WL)
+ #   id: fsv_2021
+ # - platform: samsung_nasa
+ #   fsv: 2022
+ #  nasa_device_id: nasa_device_11
+ #   name: Water Law (Low Flow Temp1 WL1)
+ #   id: fsv_2022
   - platform: samsung_nasa
-    fsv: 2021
+    fsv: 2031
     nasa_device_id: nasa_device_1
-    name: Water Law L1 (Flow Temp) High
-    id: fsv_2021
+    name: Water Law (High Flow Temp WL2)
+    id: fsv_2031
   - platform: samsung_nasa
-    fsv: 2022
+    fsv: 2032
     nasa_device_id: nasa_device_1
-    name: Water Law L1 (Flow Temp) Low
-    id: fsv_2022
+    name: Water Law (Low Flow Temp WL2)
+    id: fsv_2032
   - platform: samsung_nasa
-    fsv: 2031
-    nasa_device_id: nasa_device_1
-    name: Water Law L2 (Flow Temp) High
-    id: fsv_2031
-  - platform: samsung_nasa
-    fsv: 2032
-    nasa_device_id: nasa_device_1
-    name: Water Law L2 (Flow Temp) Low
-    id: fsv_2032
-  - platform: samsung_nasa
-    message: 0x4248
-    name: Water Law Tareget Temp Correction
-    # 0x4247: "VAR_IN_TEMP_WATER_OUTLET_TARGET_F", 0x4248: "VAR_IN_TEMP_WATER_LAW_TARGET_F"
-    #internal: true
-    nasa_device_id: nasa_device_1
-    id: water_low_target_temp_corr
+    message: 0x4248
+    name: Heat Temp Correction
+# 0x4247: VAR_IN_TEMP_WATER_OUTLET_TARGET_F, 0x4248: VAR_IN_TEMP_WATER_LAW_TARGET_F
+#internal: true
+    nasa_device_id: nasa_device_1
+    id: water_low_target_temp_corr
 
 select:
   - platform: samsung_nasa
@@ -129,6 +129,12 @@ select:
     nasa_device_id: nasa_device_1
     name: Hot Water Mode
     id: hotwater_mode
+
+  - platform: samsung_nasa
+    message: 0x4001
+    nasa_device_id: nasa_device_1
+    name: Heat Mode
+    id: heat_mode
 
 switch:
   - platform: samsung_nasa
@@ -140,15 +146,15 @@ switch:
   - platform: samsung_nasa
     message: 0x4000
     nasa_device_id: nasa_device_1
-    name: Zone 1 Power
-    internal: true
+    name: Heat Power
+#   internal: true
     id: zone_power
-  - platform: samsung_nasa
-    message: 0x411E
-    nasa_device_id: nasa_device_1
-    name: Zone 2 Power
-    internal: true
-    id: zone2_power
+#  - platform: samsung_nasa
+#    message: 0x411E
+#    nasa_device_id: nasa_device_1
+#    name: Zone 2 Power
+#    internal: true
+#    id: zone2_power
 
 sensor:
   # Heating & DHW Temperatures
@@ -158,18 +164,18 @@ sensor:
     name: "DHW Temperature"
     internal: true
     id: hot_water_current_temp
-  - platform: samsung_nasa
-    message: 0x4203
-    nasa_device_id: nasa_device_1
-    name: "Zone 1 Indoor Temp"
-    internal: true
-    id: zone_room_temp
-  - platform: samsung_nasa
-    message: 0x42D4
-    nasa_device_id: nasa_device_1
-    name: "Zone 2 Indoor Temp"
-    internal: true
-    id: zone2_room_temp
+ # - platform: samsung_nasa
+ #   message: 0x4203
+ #   nasa_device_id: nasa_device_1
+ #   name: "Zone 1 Indoor Temp"
+ #   internal: true
+ #   id: zone_room_temp
+ # - platform: samsung_nasa
+ #   message: 0x42D4
+ #   nasa_device_id: nasa_device_1
+ #   name: "Zone 2 Indoor Temp"
+ #   internal: true
+ #   id: zone2_room_temp
 
   # Valves & Pumps
   # 0x408A: ENUM_IN_2WAY_VALVE
@@ -330,8 +336,13 @@ binary_sensor:
   - platform: samsung_nasa
     message: 0x8010
     nasa_device_id: nasa_device_2
-    name: Compressor Status
+    name: Status Compressor
     id: compressor_status 
+  - platform: samsung_nasa
+    message: 0x8062
+    nasa_device_id: nasa_device_2 
+    name:  Status Defrost
+    id: defrost_status
 
 climate:
   - platform: samsung_nasa
@@ -353,48 +364,48 @@ climate:
         target_temperature: 0.5
         current_temperature: 0.1
 
-  - platform: samsung_nasa
-    name: Ground Floor Heating
-    id: climate_ground_floor
-    power_switch_id: zone_power
-    current_temp_sensor_id: zone_room_temp
-    target_temp_number_id: zone_target_temp
-    action_mode_sensor:
-      id: two_way_valve
-      mappings:
-        0: CLIMATE_ACTION_HEATING
-        1: CLIMATE_ACTION_IDLE
-        2: CLIMATE_ACTION_HEATING
-        3: CLIMATE_ACTION_IDLE
-    visual:
-      min_temperature: 16
-      max_temperature: 30
-      temperature_step:
-        target_temperature: 0.5
-        current_temperature: 0.1
-
-  - platform: samsung_nasa
-    name: First Floor Heating
-    id: climate_first_floor
-    power_switch_id: zone2_power
-    current_temp_sensor_id: zone2_room_temp
-    target_temp_number_id:  zone2_target_temp
-    action_mode_sensor:
-      id: two_way_valve
-      mappings:
-        0: CLIMATE_ACTION_HEATING
-        1: CLIMATE_ACTION_HEATING
-        2: CLIMATE_ACTION_IDLE
-        3: CLIMATE_ACTION_IDLE
-    visual:
-      min_temperature: 16
-      max_temperature: 30
-      temperature_step:
-        target_temperature: 0.5
-        current_temperature: 0.1        
+# - platform: samsung_nasa
+#   name: Ground Floor Heating
+#   id: climate_ground_floor
+#   power_switch_id: zone_power
+#   current_temp_sensor_id: zone_room_temp
+#   target_temp_number_id: zone_target_temp
+#   action_mode_sensor:
+#     id: two_way_valve
+#     mappings:
+#       0: CLIMATE_ACTION_HEATING
+#       1: CLIMATE_ACTION_IDLE
+#       2: CLIMATE_ACTION_HEATING
+#       3: CLIMATE_ACTION_IDLE
+#   visual:
+#     min_temperature: 16
+#     max_temperature: 30
+#     temperature_step:
+#       target_temperature: 0.5
+#       current_temperature: 0.1
+#
+# - platform: samsung_nasa
+#   name: First Floor Heating
+#   id: climate_first_floor
+#   power_switch_id: zone2_power
+#   current_temp_sensor_id: zone2_room_temp
+#   target_temp_number_id:  zone2_target_temp
+#   action_mode_sensor:
+#     id: two_way_valve
+#     mappings:
+#       0: CLIMATE_ACTION_HEATING
+#       1: CLIMATE_ACTION_HEATING
+#       2: CLIMATE_ACTION_IDLE
+#       3: CLIMATE_ACTION_IDLE
+#   visual:
+#     min_temperature: 16
+#     max_temperature: 30
+#     temperature_step:
+#       target_temperature: 0.5
+#       current_temperature: 0.1        
 
 interval:
-  - interval: 30min
+  - interval: 240min
     startup_delay: 30s
     then:
       # This automation action requests NASA to read
@@ -405,7 +416,8 @@ interval:
       # number of components - they will be batched into
       # groups of up to 10 messages before being sent,
       - samsung_nasa.request_read:
-          id: [fsv_2011, fsv_2012, fsv_2021, fsv_2022, fsv_2031, fsv_2032]
+         # id: [fsv_2011, fsv_2012, fsv_2021, fsv_2022, fsv_2031, fsv_2032]
+         id: [fsv_2011, fsv_2012, fsv_2031, fsv_2032]
 
 button:
   - platform: template
@@ -413,5 +425,5 @@ button:
     entity_category: config
     on_press:
       - samsung_nasa.request_read:
-          id: [fsv_2011, fsv_2012, fsv_2021, fsv_2022, fsv_2031, fsv_2032]
-
+         # id: [fsv_2011, fsv_2012, fsv_2021, fsv_2022, fsv_2031, fsv_2032]
+         id: [fsv_2011, fsv_2012, fsv_2031, fsv_2032]
