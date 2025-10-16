@@ -4,7 +4,7 @@ external_components:
     components: [samsung_nasa]
 
 esphome:
-  name: samsung
+  name: samsungehs
   friendly_name: Heat Pump
   min_version: 2025.8.0
 
@@ -25,7 +25,8 @@ logger:
 
 # Enable Home Assistant API
 api:
-
+  reboot_timeout: 0s
+  
 # Allow Over-The-Air updates
 ota:
   - platform: web_server
