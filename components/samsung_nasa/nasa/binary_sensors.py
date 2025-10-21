@@ -49,6 +49,11 @@ binary_sensors = {
             device_class = DEVICE_CLASS_HEAT
         )
     },
+    0x4089: {
+        NASA_LABEL: "ENUM_IN_STATE_WATER_PUMP",
+        NASA_MODE: CONTROLLER_MODE_STATUS,
+        CONF_DEFAULTS: binary_sensor_defaults(icon = ICON_LIQUID)
+    },
     0x406C: {
         CONF_ICON: ICON_HEAT,
         NASA_LABEL: "ENUM_IN_BACKUP_HEATER",
