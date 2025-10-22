@@ -1,0 +1,455 @@
+# Import external component from GitHub
+external_components:
+  - source: github://stokiloton/esphome-samsung-nasa@main
+    components: [samsung_nasa]
+    refresh: 100s
+
+esphome:
+  name: samsungehsv2
+  friendly_name: Heat Pump v2
+  min_version: 2025.8.0
+
+esp32:
+  board: esp32dev
+#  board: m5stack-atom
+  framework:
+    # Arduino framework has faster compilation but 
+    # uses more RAM and Flash; ESP-IDF framework has 
+    # slower compilation but uses less RAM and FLash
+    type: esp-idf
+    # type: arduino
+
+# Enable logging
+logger:
+  logs:
+    component: ERROR
+
+# Enable Home Assistant API
+api:
+  # work without HA - no restarts
+  reboot_timeout: 0s
+  
+# Allow Over-The-Air updates
+ota:
+  - platform: web_server
+  - platform: esphome
+
+wifi:
+ # ssid: ""
+ # password: ""
+  ap:
+    ssid: "samsungehsv2"
+    password: ""
+
+# In combination with the ap: this allows the user
+# to provision wifi credentials to the device via WiFi AP.
+captive_portal:
+
+# This creates a HA style local web page 
+web_server:
+  port: 80
+  version: 3
+  log: true
+  local: true
+
+# Specify pins used by the board to communicate over RS485
+uart:
+  tx_pin: GPIO17
+  rx_pin: GPIO16
+  baud_rate: 9600
+  parity: EVEN
+
+## SAMSUNG NASA CONFIGURATION
+samsung_nasa:
+  debug_log_messages: false
+  debug_log_undefined_messages: false
+  nasa_client: {}
+  devices:
+   - address: 20.00.00
+     id: nasa_device_1
+   - address: 10.00.00
+     id: nasa_device_2
+
+number:
+#  - platform: samsung_nasa
+#    message: 0x4201
+#    name: Zone 1 Target Temp
+#    internal: true
+#    nasa_device_id: nasa_device_1
+#    id: zone_target_temp
+#  - platform: samsung_nasa
+#    message: 0x42D6
+#    name: Zone 2 Target Temp
+#    internal: true
+#    nasa_device_id: nasa_device_1
+#    id: zone2_target_temp
+  - platform: samsung_nasa
+    message: 0x4235
+    name: DHW Target Temperature
+    internal: true
+    nasa_device_id: nasa_device_1
+    id: hot_water_target_temp
+  - platform: samsung_nasa
+    fsv: 2011
+    nasa_device_id: nasa_device_1
+    name: Water Law (High Outdoor Temp)
+    id: fsv_2011
+  - platform: samsung_nasa
+    fsv: 2012
+    nasa_device_id: nasa_device_1
+    name: Water Law (Low Outdoor Temp)
+    id: fsv_2012
+  - platform: samsung_nasa
+    fsv: 2021
+    nasa_device_id: nasa_device_1
+    name: Water Law WL1(High Flow Temp)
+    id: fsv_2021
+  - platform: samsung_nasa
+    fsv: 2022
+    nasa_device_id: nasa_device_1
+    name: Water Law WL1(Low Flow Temp)
+    id: fsv_2022
+  - platform: samsung_nasa
+    fsv: 2031
+    nasa_device_id: nasa_device_1
+    name: Water Law WL2(High Flow Temp)
+    id: fsv_2031
+  - platform: samsung_nasa
+    fsv: 2032
+    nasa_device_id: nasa_device_1
+    name: Water Law WL2(Low Flow Temp)
+    id: fsv_2032
+  - platform: samsung_nasa
+    # 0x4247: VAR_IN_TEMP_WATER_OUTLET_TARGET_F
+    message: 0x4247
+    name: Heat Temp Outlet Target (HEAT mode)
+    #internal: true
+    nasa_device_id: nasa_device_1
+    id: outlet_target_temp
+  - platform: samsung_nasa
+    # 0x4248: VAR_IN_TEMP_WATER_LAW_TARGET_F
+    message: 0x4248
+    name: Heat Temp Correction (AUTO mode)
+    nasa_device_id: nasa_device_1
+    id: water_low_target_temp_corr
+
+select:
+  - platform: samsung_nasa
+    message: 0x4066
+    nasa_device_id: nasa_device_1
+    name: Hot Water Mode
+    id: hotwater_mode
+
+  - platform: samsung_nasa
+    message: 0x4001
+    nasa_device_id: nasa_device_1
+    name: Heat Mode
+    id: heat_mode
+
+switch:
+  - platform: samsung_nasa
+    message: 0x4065
+    nasa_device_id: nasa_device_1
+    name: "Hot Water Power"
+    id: dhw_power_switch
+    
+  - platform: samsung_nasa
+    message: 0x4000
+    nasa_device_id: nasa_device_1
+    name: Heat Power
+#   internal: true
+    id: zone_power
+#  - platform: samsung_nasa
+#    message: 0x411E
+#    nasa_device_id: nasa_device_1
+#    name: Zone 2 Power
+#    internal: true
+#    id: zone2_power
+
+  - platform: samsung_nasa
+    message: 0x4046
+    nasa_device_id: nasa_device_1
+    name: Silence mode
+    id: silence_mode_switch
+
+sensor:
+  # Heating & DHW Temperatures
+  - platform: samsung_nasa
+    message: 0x4237
+    nasa_device_id: nasa_device_1
+    name: "DHW Temperature"
+    internal: true
+    id: hot_water_current_temp
+ # - platform: samsung_nasa
+ #   message: 0x4203
+ #   nasa_device_id: nasa_device_1
+ #   name: "Zone 1 Indoor Temp"
+ #   internal: true
+ #   id: zone_room_temp
+ # - platform: samsung_nasa
+ #   message: 0x42D4
+ #   nasa_device_id: nasa_device_1
+ #   name: "Zone 2 Indoor Temp"
+ #   internal: true
+ #   id: zone2_room_temp
+
+  # Valves & Pumps
+  # 0x408A: ENUM_IN_2WAY_VALVE
+  # 3 = OFF
+  # 2 = zone 1 ON
+  # 1 = zone 2 ON 
+  # 0 = all ON
+  # On MIM board  2-way valves 
+  # are connected to Pins B9/B10,
+  # B13/B14 (switched live output)
+  #        0    1    2   3
+  #  B09  OFF  ON   OFF  ON
+  #  B10  ON   OFF  ON   OFF
+  #  B13  OFF  OFF  ON   ON
+  #. B14  ON   ON   OFF  OFF    
+  - platform: samsung_nasa
+    message: 0x408A
+    nasa_device_id: nasa_device_1
+    name: 2-Way Valve
+    internal: true
+    id: two_way_valve 
+  # 0x4067
+  # 0 = room; 1 = tank
+  - platform: samsung_nasa
+    message: 0x4067
+    nasa_device_id: nasa_device_1
+    name: 3-Way Valve
+    internal: true
+    id: three_way_valve     
+  # 0x4089
+  # 0 = off; 1 =  on
+
+  # Error Status
+  - platform: samsung_nasa
+    message: 0x8235
+    nasa_device_id: nasa_device_2
+    name: Error Code
+
+  # Energy
+  - platform: samsung_nasa
+    message: 0x8414
+    nasa_device_id: nasa_device_2
+    name: Total Consumed Energy
+    id: heat_pump_cumulative_energy
+  - platform: samsung_nasa
+    message: 0x4427
+    nasa_device_id: nasa_device_1
+    name: Total Produced Energy
+    id: heat_pump_produced_energy
+  - platform: samsung_nasa
+    message: 0x8413
+    nasa_device_id: nasa_device_2
+    name: Power Consumed last Minute
+    id: heat_consumed_last_min
+  - platform: samsung_nasa
+    message: 0x4426
+    nasa_device_id: nasa_device_1
+    name: Power Produced Last Minute
+    id: heat_generated_last_min
+
+  # Outdoor & Flow Temperatures
+  - platform: samsung_nasa
+    message: 0x8204
+    nasa_device_id: nasa_device_2
+    name: Outdoor Temperature
+    id: outdoor_temp
+  - platform: samsung_nasa
+    message: 0x42E9
+    nasa_device_id: nasa_device_1
+    name: Flow Rate Sensor
+  - platform: samsung_nasa
+    message: 0x4238
+    nasa_device_id: nasa_device_1
+    name: Flow Temp Out
+    id: zone_flow_temp
+  - platform: samsung_nasa
+    message: 0x4236
+    nasa_device_id: nasa_device_1
+    name: Flow Temp Return
+    id: zone_flow_return_temp
+
+  # Performance
+  - platform: template
+    name: COP - Total
+    icon: mdi:chart-bar
+    lambda: |-
+      return (id(heat_pump_produced_energy).state /
+             id(heat_pump_cumulative_energy).state);
+    update_interval: 300s
+    accuracy_decimals: 2
+  - platform: template
+    name: COP - Instant
+    icon: mdi:chart-bar
+    state_class: measurement
+    lambda: |-
+      float x = (id(heat_generated_last_min).state /
+           id(heat_consumed_last_min).state);
+      if (x > 8) { x = 8; }
+      if (x < 0) { x = 0; }
+      return x;
+    update_interval: 10s
+    accuracy_decimals: 2
+  - platform: template
+    name: COP - Daily
+    icon: mdi:chart-bar
+    state_class: measurement
+    lambda: |-
+      float x = (id(daily_heat_generated).state /
+           id(daily_energy_consumed).state);
+      if (x > 8) { x = 8; }
+      if (x < 0) { x = 0; }
+      return x;
+    update_interval: 10s
+    accuracy_decimals: 2
+  - platform: template
+    name: "Flow Temp Delta"
+    icon: mdi:thermometer
+    id: dT
+    unit_of_measurement: °C
+    update_interval: 10s
+    lambda: |-
+      return (id(zone_flow_temp).state - (id(zone_flow_return_temp).state));
+  - platform: template
+    name: "Flow Temp Target (AUTO mode)"
+    icon: mdi:thermometer
+    id: flow_temp_target_auto_mode
+    unit_of_measurement: °C
+    update_interval: 10s
+    accuracy_decimals: 2
+    lambda: |-
+      float a = ((id(fsv_2031).state - id(fsv_2032).state) / (id(fsv_2011).state - id(fsv_2012).state));
+      return (id(fsv_2032).state + a * (id(outdoor_temp).state - id(fsv_2012).state) + id(water_low_target_temp_corr).state);
+  - platform: total_daily_energy
+    id: daily_energy_consumed
+    name: Daily Energy Consumed
+    power_id: heat_consumed_last_min
+    unit_of_measurement: 'kWh'
+    state_class: total_increasing
+    device_class: energy
+    accuracy_decimals: 3
+    filters:
+      # Multiplication factor from W to kW is 0.001
+      - multiply: 0.001
+  - platform: total_daily_energy
+    id: daily_heat_generated
+    name: Daily Heat Generated
+    power_id: heat_generated_last_min
+    unit_of_measurement: 'kWh'
+    state_class: total_increasing
+    device_class: energy
+    accuracy_decimals: 3
+    filters:
+      # Multiplication factor from W to kW is 0.001
+      - multiply: 0.001
+
+# Enable time component to reset energy at midnight
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+    timezone: "Europe/Warsaw"
+
+binary_sensor:
+  - platform: samsung_nasa
+    message: 0x8010
+    nasa_device_id: nasa_device_2
+    name: Status Compressor
+    id: compressor_status 
+  - platform: samsung_nasa
+    message: 0x8062
+    nasa_device_id: nasa_device_2 
+    name:  Status Defrost
+    id: defrost_status
+  - platform: samsung_nasa
+    message: 0x4089
+    nasa_device_id: nasa_device_1
+    name: Status Primary Water Pump
+    id: primary_water_pump_status
+
+climate:
+  - platform: samsung_nasa
+    name: Hot Water
+    id: climate_hot_water
+    power_switch_id: dhw_power_switch
+    current_temp_sensor_id: hot_water_current_temp
+    target_temp_number_id: hot_water_target_temp
+    custom_preset_select_id: hotwater_mode
+    action_mode_sensor:
+      id: three_way_valve
+      mappings:
+        0: CLIMATE_ACTION_IDLE
+        1: CLIMATE_ACTION_HEATING
+    visual:
+      min_temperature: 30
+      max_temperature: 60
+      temperature_step:
+        target_temperature: 0.5
+        current_temperature: 0.1
+
+# - platform: samsung_nasa
+#   name: Ground Floor Heating
+#   id: climate_ground_floor
+#   power_switch_id: zone_power
+#   current_temp_sensor_id: zone_room_temp
+#   target_temp_number_id: zone_target_temp
+#   action_mode_sensor:
+#     id: two_way_valve
+#     mappings:
+#       0: CLIMATE_ACTION_HEATING
+#       1: CLIMATE_ACTION_IDLE
+#       2: CLIMATE_ACTION_HEATING
+#       3: CLIMATE_ACTION_IDLE
+#   visual:
+#     min_temperature: 16
+#     max_temperature: 30
+#     temperature_step:
+#       target_temperature: 0.5
+#       current_temperature: 0.1
+#
+# - platform: samsung_nasa
+#   name: First Floor Heating
+#   id: climate_first_floor
+#   power_switch_id: zone2_power
+#   current_temp_sensor_id: zone2_room_temp
+#   target_temp_number_id:  zone2_target_temp
+#   action_mode_sensor:
+#     id: two_way_valve
+#     mappings:
+#       0: CLIMATE_ACTION_HEATING
+#       1: CLIMATE_ACTION_HEATING
+#       2: CLIMATE_ACTION_IDLE
+#       3: CLIMATE_ACTION_IDLE
+#   visual:
+#     min_temperature: 16
+#     max_temperature: 30
+#     temperature_step:
+#       target_temperature: 0.5
+#       current_temperature: 0.1        
+
+interval:
+  - interval: 240min
+    startup_delay: 30s
+    then:
+      # This automation action requests NASA to read
+      # the NASA messages associated with the component ids
+      # Only Sensor, Switch, Number & Select components with
+      # the samsung_nasa framework are accepted in the list
+      # of ids (can be one or more). You can specify any
+      # number of components - they will be batched into
+      # groups of up to 10 messages before being sent,
+      - samsung_nasa.request_read:
+         # id: [fsv_2011, fsv_2012, fsv_2021, fsv_2022, fsv_2031, fsv_2032]
+         id: [fsv_2011, fsv_2012, fsv_2031, fsv_2032]
+
+button:
+  - platform: template
+    name: Request
+    entity_category: config
+    on_press:
+      - samsung_nasa.request_read:
+         # id: [fsv_2011, fsv_2012, fsv_2021, fsv_2022, fsv_2031, fsv_2032]
+         id: [fsv_2011, fsv_2012, fsv_2031, fsv_2032]
