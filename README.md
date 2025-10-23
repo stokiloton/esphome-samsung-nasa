@@ -306,8 +306,10 @@ Here is the python entry that configures the above DHW Temperature sensor:
 | 0x4237    | VAR_IN_TEMP_WATER_TANK_F                  | DHW tank temperature                   |
 | 0x4238    | VAR_IN_TEMP_WATER_OUT_F                   | Flow temperature                       |
 | 0x4203    | VAR_IN_TEMP_ROOM_F                        | Zone 1 room temperature                |
+| 0x427F    | VAR_IN_TEMP_WATER_LAW_F                   | Water law target flow temperature      |
 | 0x4204    | VAR_IN_TEMP_ZONE2_F                       | Zone 2 room temperature                |
 | 0x42E9    | VAR_IN_FLOW_SENSOR_CALC                   | Flow rate sensor (l/min)               |
+| 0x4284    | NASA_INDOOR_POWER_CONSUMPTION             | Indoor unit power consumption          |
 | 0x4426    | LVAR_IN_4426                              | Heat pump produced energy (last minute)|
 | 0x4427    | LVAR_IN_4427                              | Heat pump produced energy (total)      |
 | 0x8204    | VAR_OUT_SENSOR_AIROUT                     | Outdoor temperature                    |
