@@ -197,7 +197,7 @@ sensor:
     message: 0x427F
     nasa_device_id: nasa_device_1
     #internal: true
-    name: "Flow Temp Target Calc (AUTO mode)"
+    name: "Flow Temp Target (AUTO mode)"
     id: flow_temp_target_auto_mode
 
   # Valves & Pumps
