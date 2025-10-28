@@ -2,10 +2,11 @@
 external_components:
   - source: github://stokiloton/esphome-samsung-nasa@main
     components: [samsung_nasa]
+    #refresh: 100s
 
 esphome:
-  name: samsungehs
-  friendly_name: Heat Pump
+  name: samsungehsv2
+  friendly_name: Heat Pump v2
   min_version: 2025.8.0
 
 esp32:
@@ -26,7 +27,7 @@ logger:
 # Enable Home Assistant API
 api:
   # work without HA - no restarts
-  # reboot_timeout: 0s
+  reboot_timeout: 0s
   
 # Allow Over-The-Air updates
 ota:
@@ -34,10 +35,11 @@ ota:
   - platform: esphome
 
 wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
-  # Set up a wifi access point
-  ap: {}
+ # ssid: ""
+ # password: ""
+  ap:
+    ssid: "samsungehsv2"
+    password: ""
 
 # In combination with the ap: this allows the user
 # to provision wifi credentials to the device via WiFi AP.
@@ -97,31 +99,37 @@ number:
     nasa_device_id: nasa_device_1
     name: Water Law (Low Outdoor Temp)
     id: fsv_2012
- # - platform: samsung_nasa
- #   fsv: 2021
- #   nasa_device_id: nasa_device_1
- #   name: Water Law (High Flow Temp WL)
- #   id: fsv_2021
- # - platform: samsung_nasa
- #   fsv: 2022
- #  nasa_device_id: nasa_device_11
- #   name: Water Law (Low Flow Temp1 WL1)
- #   id: fsv_2022
+  - platform: samsung_nasa
+    fsv: 2021
+    nasa_device_id: nasa_device_1
+    name: Water Law WL1(High Flow Temp)
+    id: fsv_2021
+  - platform: samsung_nasa
+    fsv: 2022
+    nasa_device_id: nasa_device_1
+    name: Water Law WL1(Low Flow Temp)
+    id: fsv_2022
   - platform: samsung_nasa
     fsv: 2031
     nasa_device_id: nasa_device_1
-    name: Water Law (High Flow Temp WL2)
+    name: Water Law WL2(High Flow Temp)
     id: fsv_2031
   - platform: samsung_nasa
     fsv: 2032
     nasa_device_id: nasa_device_1
-    name: Water Law (Low Flow Temp WL2)
+    name: Water Law WL2(Low Flow Temp)
     id: fsv_2032
   - platform: samsung_nasa
+    # 0x4247: VAR_IN_TEMP_WATER_OUTLET_TARGET_F
+    message: 0x4247
+    name: Heat Temp Outlet Target (HEAT mode)
+    #internal: true
+    nasa_device_id: nasa_device_1
+    id: outlet_target_temp
+  - platform: samsung_nasa
+    # 0x4248: VAR_IN_TEMP_WATER_LAW_TARGET_F
     message: 0x4248
-    name: Heat Temp Correction
-# 0x4247: VAR_IN_TEMP_WATER_OUTLET_TARGET_F, 0x4248: VAR_IN_TEMP_WATER_LAW_TARGET_F
-#internal: true
+    name: Heat Temp Correction (AUTO mode)
     nasa_device_id: nasa_device_1
     id: water_low_target_temp_corr
 
@@ -142,9 +150,9 @@ switch:
   - platform: samsung_nasa
     message: 0x4065
     nasa_device_id: nasa_device_1
-    name: "DHW Power"
-    internal: true
+    name: "Hot Water Power"
     id: dhw_power_switch
+    
   - platform: samsung_nasa
     message: 0x4000
     nasa_device_id: nasa_device_1
@@ -157,6 +165,12 @@ switch:
 #    name: Zone 2 Power
 #    internal: true
 #    id: zone2_power
+
+  - platform: samsung_nasa
+    message: 0x4046
+    nasa_device_id: nasa_device_1
+    name: Silence mode
+    id: silence_mode_switch
 
 sensor:
   # Heating & DHW Temperatures
@@ -205,16 +219,10 @@ sensor:
     message: 0x4067
     nasa_device_id: nasa_device_1
     name: 3-Way Valve
-    internal: true
+    #internal: true
     id: three_way_valve     
   # 0x4089
   # 0 = off; 1 =  on
-  - platform: samsung_nasa
-    message: 0x4089
-    nasa_device_id: nasa_device_1
-    name: Primary Water Pump
-    internal: true
-    id: primary_water_pump
 
   # Error Status
   - platform: samsung_nasa
@@ -249,6 +257,7 @@ sensor:
     message: 0x8204
     nasa_device_id: nasa_device_2
     name: Outdoor Temperature
+    id: outdoor_temp
   - platform: samsung_nasa
     message: 0x42E9
     nasa_device_id: nasa_device_1
@@ -269,8 +278,8 @@ sensor:
     name: COP - Total
     icon: mdi:chart-bar
     lambda: |-
-      return id(heat_pump_produced_energy).state /
-             id(heat_pump_cumulative_energy).state;
+      return (id(heat_pump_produced_energy).state /
+             id(heat_pump_cumulative_energy).state);
     update_interval: 300s
     accuracy_decimals: 2
   - platform: template
@@ -305,6 +314,16 @@ sensor:
     update_interval: 10s
     lambda: |-
       return (id(zone_flow_temp).state - (id(zone_flow_return_temp).state));
+  - platform: template
+    name: "Flow Temp Target (AUTO mode)"
+    icon: mdi:thermometer
+    id: flow_temp_target_auto_mode
+    unit_of_measurement: °C
+    update_interval: 10s
+    accuracy_decimals: 2
+    lambda: |-
+      float a = ((id(fsv_2031).state - id(fsv_2032).state) / (id(fsv_2011).state - id(fsv_2012).state));
+      return (id(fsv_2032).state + a * (id(outdoor_temp).state - id(fsv_2012).state) + id(water_low_target_temp_corr).state);
   - platform: total_daily_energy
     id: daily_energy_consumed
     name: Daily Energy Consumed
@@ -332,7 +351,7 @@ sensor:
 time:
   - platform: homeassistant
     id: homeassistant_time
-    timezone: "Europe/London"
+    timezone: "Europe/Warsaw"
 
 binary_sensor:
   - platform: samsung_nasa
@@ -345,6 +364,11 @@ binary_sensor:
     nasa_device_id: nasa_device_2 
     name:  Status Defrost
     id: defrost_status
+  - platform: samsung_nasa
+    message: 0x4089
+    nasa_device_id: nasa_device_1
+    name: Status Primary Water Pump
+    id: primary_water_pump_status
 
 climate:
   - platform: samsung_nasa
@@ -418,8 +442,7 @@ interval:
       # number of components - they will be batched into
       # groups of up to 10 messages before being sent,
       - samsung_nasa.request_read:
-         # id: [fsv_2011, fsv_2012, fsv_2021, fsv_2022, fsv_2031, fsv_2032]
-         id: [fsv_2011, fsv_2012, fsv_2031, fsv_2032]
+         id: [fsv_2011, fsv_2012, fsv_2021, fsv_2022, fsv_2031, fsv_2032]
 
 button:
   - platform: template
@@ -427,5 +450,4 @@ button:
     entity_category: config
     on_press:
       - samsung_nasa.request_read:
-         # id: [fsv_2011, fsv_2012, fsv_2021, fsv_2022, fsv_2031, fsv_2032]
-         id: [fsv_2011, fsv_2012, fsv_2031, fsv_2032]
+         id: [fsv_2011, fsv_2012, fsv_2021, fsv_2022, fsv_2031, fsv_2032]
