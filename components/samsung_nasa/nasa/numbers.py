@@ -112,6 +112,7 @@ numbers = {
         NASA_MODE: CONTROLLER_MODE_CONTROL,
         CONF_DATA: cmd_numeric_data(-5, +5),
         CONF_STEP: 0.5,
+        CONF_ENTITY_CATEGORY: ENTITY_CATEGORY_CONFIG,
         CONF_DEFAULTS: temperature_defaults()
     },
     0x424A: {
