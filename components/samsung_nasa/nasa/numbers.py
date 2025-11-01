@@ -111,9 +111,8 @@ numbers = {
         NASA_LABEL: "VAR_IN_TEMP_WATER_LAW_TARGET_F",
         NASA_MODE: CONTROLLER_MODE_CONTROL,
         CONF_DATA: cmd_numeric_data(-5, +5),
-        CONF_DEFAULTS: temperature_defaults(
-            step: 0.5,
-        )
+        CONF_STEP: 0.5,
+        CONF_DEFAULTS: temperature_defaults()
     },
     0x424A: {
         NASA_LABEL: "VAR_IN_FSV_1011",
