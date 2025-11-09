@@ -110,12 +110,14 @@ These are the only fields you need to provide. All other fields such as unit of 
 
 ### Supported Commands  
 
-| NASA Code | NASA Label                        | Description                            |
-|-----------|-----------------------------------|--------------------------------------- |
-| 0x4201    | VAR_IN_TEMP_TARGET_F              | (Zone 1) Target Temperature            |
-| 0x4206    | VAR_IN_TEMP_TARGET_ZONE2_F        | (Zone 2) Target Temperature            |
-| 0x4235    | VAR_IN_TEMP_WATER_HEATER_TARGET_F | DHW Target Temperature                 |
-| 0x4247    | VAR_IN_TEMP_WATER_OUTLET_TARGET_F | Water Outlet Target Temperature.       |
+| NASA Code | NASA Label                              | Description                            |
+|-----------|-----------------------------------------|--------------------------------------- |
+| 0x4201    | VAR_IN_TEMP_TARGET_F                    | Zone 1 Target Temperature              |
+| 0x4206    | VAR_IN_TEMP_TARGET_ZONE2_F              | Zone 2 Target Temperature              |
+| 0x4235    | VAR_IN_TEMP_WATER_HEATER_TARGET_F       | DHW Target Temperature                 |
+| 0x4247    | VAR_IN_TEMP_WATER_OUTLET_TARGET_F       | Zone 1 Water Outlet Target Temperature |
+| 0x4248    | VAR_IN_TEMP_WATER_LAW_TARGET_F          | Water Law Target Temperature           |
+| 0x42D7    | VAR_IN_TEMP_WATER_OUTLET_TARGET_ZONE2_F | Zone 2 Water Outlet Target Temperature |
 
 ### Supported FSVs  
 
@@ -302,6 +304,7 @@ Here is the python entry that configures the above DHW Temperature sensor:
 | 0x406A    | ENUM_IN_THERMOSTAT2                       | Zone 2 input signal from external stat |
 | 0x4089    | ENUM_IN_STATE_WATER_PUMP                  | Primary water pump status              |
 | 0x408A    | ENUM_IN_2WAY_VALVE                        | Zone control valve status              |
+| 0x40C4    | ENUM_IN_WATERPUMP_PWM_VALUE               | PWM Water Pump Status (%)              |
 | 0x4236    | VAR_IN_TEMP_WATER_IN_F                    | Flow return temperature                |
 | 0x4237    | VAR_IN_TEMP_WATER_TANK_F                  | DHW tank temperature                   |
 | 0x4238    | VAR_IN_TEMP_WATER_OUT_F                   | Flow temperature                       |

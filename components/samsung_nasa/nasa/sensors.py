@@ -120,7 +120,7 @@ sensors = {
         NASA_MODE: CONTROLLER_MODE_STATUS,
         CONF_DEFAULTS: sensor_defaults()
     },
-    0x40c4: {
+    0x40C4: {
         NASA_LABEL: "ENUM_IN_WATERPUMP_PWM_VALUE",
         NASA_MODE: CONTROLLER_MODE_STATUS,
         CONF_DEFAULTS: sensor_defaults(
