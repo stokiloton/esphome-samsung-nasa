@@ -39,7 +39,7 @@ class NASA_Climate : public climate::Climate, public Component {
 
  protected:
   void control(const climate::ClimateCall &call) override;
-  std::vector<const char *> get_custom_presets();
+  std::set<std::string> get_custom_presets();
   void on_power(bool state);
   void on_target_temp(float state);
   void on_current_temp(float state);
@@ -48,7 +48,7 @@ class NASA_Climate : public climate::Climate, public Component {
   bool update_mode(climate::ClimateMode new_mode);
   bool update_current_temp(float new_temp);
   bool update_target_temp(float new_temp);
-  bool update_custom_preset(const char* new_value);
+  bool update_custom_preset(std::string new_value);
   climate::ClimateTraits traits() override;
 
   switch_::Switch *power_{nullptr};
