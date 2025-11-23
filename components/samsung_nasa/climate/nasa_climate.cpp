@@ -42,7 +42,7 @@ void NASA_Climate::on_current_temp(float state) {
 }
 
 void NASA_Climate::on_preset_select(std::string state, size_t index) {
-  if (this->update_custom_preset(state))
+  if (this->update_custom_preset(state.c_str()))
     this->publish_state();
 }
 
@@ -80,11 +80,11 @@ void NASA_Climate::control(const climate::ClimateCall &call) {
       update = true;
     }
   }
-  if (call.get_custom_preset().has_value()) {
-    auto updated = this->update_custom_preset(*call.get_custom_preset());
+  if (call.has_custom_preset()) {
+    auto updated = this->update_custom_preset(call.get_custom_preset());
     if (this->custom_presets_ != nullptr && updated) {
       auto call = this->custom_presets_->make_call();
-      call.set_option(this->custom_preset.value());
+      call.set_option(this->get_custom_preset());
       call.perform();
       this->preset.reset();
       update = true;
@@ -126,29 +126,29 @@ bool NASA_Climate::update_target_temp(float new_temp) {
   return false;
 }
 
-bool NASA_Climate::update_custom_preset(std::string new_value) {
-  if (this->custom_preset.value_or("") != new_value) {
-    this->custom_preset = new_value;
+bool NASA_Climate::update_custom_preset(const char* new_value) {
+  if (strcmp(this->get_custom_preset(), new_value) != 0) {
+    this->set_custom_preset_(new_value);
     return true;
   }
   return false;
 }
 
-std::set<std::string> NASA_Climate::get_custom_presets() {
-  std::set<std::string> presets;
+std::vector<const char*> NASA_Climate::get_custom_presets() {
+  std::set<const char*> presets;
   if (this->custom_presets_ != nullptr) {
     for (size_t i = 0; i < this->custom_presets_->size(); ++i) {
       auto item = this->custom_presets_->at(i).value();
-      presets.insert(item);
+      presets.insert(item.c_str());
     }
   }
-  return presets;
+  return std::vector<const char*>(presets.begin(), presets.end());
 }
 
 climate::ClimateTraits NASA_Climate::traits() {
   climate::ClimateTraits traits{};
-  traits.set_supports_current_temperature(true);
-  traits.set_supports_action(true);
+  traits.add_feature_flags(climate::CLIMATE_SUPPORTS_CURRENT_TEMPERATURE);
+  traits.add_feature_flags(climate::CLIMATE_SUPPORTS_ACTION);
   traits.set_supported_modes({climate::CLIMATE_MODE_OFF, climate::CLIMATE_MODE_HEAT});
   traits.set_supported_presets({});
   traits.set_supported_custom_presets(this->get_custom_presets());
