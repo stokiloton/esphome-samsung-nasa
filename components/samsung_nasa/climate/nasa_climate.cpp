@@ -2,6 +2,7 @@
 #include "../nasa.h"
 #include "esphome/components/climate/climate.h"
 #include "esphome/core/log.h"
+#include <set>
 
 namespace esphome {
 namespace samsung_nasa {
@@ -19,8 +20,8 @@ void NASA_Climate::setup() {
   if (this->action_sens_ != nullptr && this->mappings_ != nullptr) {
     this->action_sens_->add_on_state_callback([this](float state) { this->on_action_sens(state); });
   }
-  if (this->custom_presets_ != nullptr) {
-    this->custom_presets_->add_on_state_callback(
+  if (this->select_presets_ != nullptr) {
+    this->select_presets_->add_on_state_callback(
         [this](std::string state, size_t index) { this->on_preset_select(state, index); });
   }
 }
@@ -82,8 +83,8 @@ void NASA_Climate::control(const climate::ClimateCall &call) {
   }
   if (call.has_custom_preset()) {
     auto updated = this->update_custom_preset(call.get_custom_preset());
-    if (this->custom_presets_ != nullptr && updated) {
-      auto call = this->custom_presets_->make_call();
+    if (this->select_presets_ != nullptr && updated) {
+      auto call = this->select_presets_->make_call();
       call.set_option(this->get_custom_preset());
       call.perform();
       this->preset.reset();
@@ -126,23 +127,19 @@ bool NASA_Climate::update_target_temp(float new_temp) {
   return false;
 }
 
-bool NASA_Climate::update_custom_preset(const char* new_value) {
-  if (strcmp(this->get_custom_preset(), new_value) != 0) {
-    this->set_custom_preset_(new_value);
-    return true;
-  }
-  return false;
+bool NASA_Climate::update_custom_preset(const char *new_value) {
+    return this->set_custom_preset_(new_value);
 }
 
-std::vector<const char*> NASA_Climate::get_custom_presets() {
-  std::set<const char*> presets;
-  if (this->custom_presets_ != nullptr) {
-    for (size_t i = 0; i < this->custom_presets_->size(); ++i) {
-      auto item = this->custom_presets_->at(i).value();
+std::vector<const char *> NASA_Climate::get_custom_presets() {
+  std::set<const char *> presets;
+  if (this->select_presets_ != nullptr) {
+    for (size_t i = 0; i < this->select_presets_->size(); ++i) {
+      auto item = this->select_presets_->at(i).value();
       presets.insert(item.c_str());
     }
   }
-  return std::vector<const char*>(presets.begin(), presets.end());
+  return std::vector<const char *>(presets.begin(), presets.end());
 }
 
 climate::ClimateTraits NASA_Climate::traits() {
