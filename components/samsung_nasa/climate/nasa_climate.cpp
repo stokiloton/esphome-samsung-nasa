@@ -2,7 +2,7 @@
 #include "../nasa.h"
 #include "esphome/components/climate/climate.h"
 #include "esphome/core/log.h"
-#include <set>
+#include <vector>
 
 namespace esphome {
 namespace samsung_nasa {
@@ -131,24 +131,16 @@ bool NASA_Climate::update_custom_preset(const char *new_value) {
     return this->set_custom_preset_(new_value);
 }
 
-std::vector<const char *> NASA_Climate::get_custom_presets() {
-  std::set<const char *> presets;
-  if (this->select_presets_ != nullptr) {
-    for (size_t i = 0; i < this->select_presets_->size(); ++i) {
-      auto item = this->select_presets_->at(i).value();
-      presets.insert(item.c_str());
-    }
-  }
-  return std::vector<const char *>(presets.begin(), presets.end());
-}
-
 climate::ClimateTraits NASA_Climate::traits() {
   climate::ClimateTraits traits{};
   traits.add_feature_flags(climate::CLIMATE_SUPPORTS_CURRENT_TEMPERATURE);
   traits.add_feature_flags(climate::CLIMATE_SUPPORTS_ACTION);
   traits.set_supported_modes({climate::CLIMATE_MODE_OFF, climate::CLIMATE_MODE_HEAT});
   traits.set_supported_presets({});
-  traits.set_supported_custom_presets(this->get_custom_presets());
+  if (this->select_presets_ != nullptr) {
+    const auto &presets = this->select_presets_->traits.get_options();
+    traits.set_supported_custom_presets(std::vector(presets.begin(), presets.end()));
+  }
   return traits;
 }
 

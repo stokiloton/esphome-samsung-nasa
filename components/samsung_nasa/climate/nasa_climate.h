@@ -7,7 +7,6 @@
 #include "esphome/components/number/number.h"
 #include "esphome/components/switch/switch.h"
 #include <map>
-#include <vector>
 
 namespace esphome {
 namespace samsung_nasa {
@@ -39,7 +38,6 @@ class NASA_Climate : public climate::Climate, public Component {
 
  protected:
   void control(const climate::ClimateCall &call) override;
-  std::vector<const char*> get_custom_presets();
   void on_power(bool state);
   void on_target_temp(float state);
   void on_current_temp(float state);
