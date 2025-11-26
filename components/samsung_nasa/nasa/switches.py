@@ -40,8 +40,20 @@ switches = {
         CONF_DATA: empty_data(),
         CONF_DEFAULTS: bool_defaults()
     },
+    0x4046: {
+        NASA_LABEL: "NASA_CONTROL_SILENCE",
+        NASA_MODE: CONTROLLER_MODE_CONTROL,
+        CONF_DATA: empty_data(),
+        CONF_DEFAULTS: bool_defaults()
+    },
     0x406D: {
         NASA_LABEL: "ENUM_IN_OUTING_MODE",
+        NASA_MODE: CONTROLLER_MODE_CONTROL,
+        CONF_DATA: empty_data(),
+        CONF_DEFAULTS: bool_defaults()
+    },
+    0x406E: {
+        NASA_LABEL: "ENUM_IN_QUIET_MODE",
         NASA_MODE: CONTROLLER_MODE_CONTROL,
         CONF_DATA: empty_data(),
         CONF_DEFAULTS: bool_defaults()
