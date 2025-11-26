@@ -36,6 +36,11 @@ ICON_LIQUID = "mdi:cup-water"
 ICON_VAPOUR = "mdi:waves-arrow-up"
 
 binary_sensors = {
+    0x402E: {
+        NASA_LABEL: "ENUM_IN_STATE_DEFROST_MODE",
+        NASA_MODE: CONTROLLER_MODE_STATUS,
+        CONF_DEFAULTS: binary_sensor_defaults(icon = ICON_COMPRESSOR)
+    },
     0x4067: {
         NASA_LABEL: "ENUM_IN_3WAY_VALVE",
         NASA_MODE: CONTROLLER_MODE_STATUS,
@@ -82,6 +87,11 @@ binary_sensors = {
         NASA_LABEL: "ENUM_OUT_LOAD_4WAY",
         NASA_MODE: CONTROLLER_MODE_STATUS,
         CONF_DEFAULTS: binary_sensor_defaults(icon = ICON_VALVE)
+    },
+    0x8062: {
+        NASA_LABEL: "NASA_OUTDOOR_LOGICAL_DEFROST_STEP",
+        NASA_MODE: CONTROLLER_MODE_STATUS,
+        CONF_DEFAULTS: binary_sensor_defaults(icon = ICON_COMPRESSOR)
     },
     0x80AF: {
         NASA_LABEL: "BASE_HEATER",
