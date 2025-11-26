@@ -18,6 +18,7 @@ from esphome.const import (
     UNIT_EMPTY,
     UNIT_PERCENT,
     UNIT_VOLT,
+    UNIT_HERTZ,
     CONF_ENTITY_CATEGORY,
     CONF_UNIT_OF_MEASUREMENT,
     CONF_DEVICE_CLASS,
@@ -41,6 +42,9 @@ from .const import *
 ICON_ALERT = "mdi:alert"
 ICON_HUMIDITY = "mdi:water-percent"
 ICON_FLOW = "mdi:water-circle"
+ICON_WAVE = "mdi:sine-wave"
+ICON_VALVE = "mdi:valve"
+ICON_DEFROST = "mdi:snowflake-melt"
 UNIT_LITRES_PER_MIN = "L/min"
 
 def sensor_defaults(
@@ -98,7 +102,9 @@ sensors = {
     0x4067: {
         NASA_LABEL: "ENUM_IN_3WAY_VALVE",
         NASA_MODE: CONTROLLER_MODE_STATUS,
-        CONF_DEFAULTS: sensor_defaults()
+        CONF_DEFAULTS: sensor_defaults(
+            icon=ICON_VALVE
+        )
     },
     0x4069: {
         NASA_LABEL: "ENUM_IN_THERMOSTAT1",
@@ -207,6 +213,13 @@ sensors = {
             filters=[{CONF_MULTIPLY: 0.001}]
         )
     },
+    0x8061: {
+        NASA_LABEL: "NASA_OUTDOOR_INDOOR_DEFROST_STEP",
+        NASA_MODE: CONTROLLER_MODE_STATUS,
+        CONF_DEFAULTS: sensor_defaults(
+            icon=ICON_DEFROST
+        )
+    },
     0x8204: {
         NASA_LABEL: "VAR_OUT_SENSOR_AIROUT",
         NASA_MODE: CONTROLLER_MODE_STATUS,
@@ -232,6 +245,16 @@ sensors = {
             entity_category=ENTITY_CATEGORY_DIAGNOSTIC,
             filters=[{CONF_DELTA: 1}]
         )
+    },
+    0x8238: {
+        NASA_LABEL: "VAR_OUT_CONTROL_CFREQ_COMP1",
+        NASA_MODE: CONTROLLER_MODE_STATUS,
+        CONF_DEFAULTS: sensor_defaults(
+            unit_of_measurement=UNIT_HERTZ,
+            icon=ICON_WAVE,
+            device_class=DEVICE_CLASS_EMPTY,
+            state_class=STATE_CLASS_MEASUREMENT
+        )  
     },
     0x8413: {
         NASA_LABEL: "LVAR_OUT_CONTROL_WATTMETER_1W_1MIN_SUM",
