@@ -34,12 +34,13 @@ ICON_COMPRESSOR = "mdi:heat-pump"
 ICON_HOT_GAS = "mdi:gas-burner"
 ICON_LIQUID = "mdi:cup-water"
 ICON_VAPOUR = "mdi:waves-arrow-up"
+ICON_DEFROST = "mdi:snowflake-melt"
 
 binary_sensors = {
     0x402E: {
         NASA_LABEL: "ENUM_IN_STATE_DEFROST_MODE",
         NASA_MODE: CONTROLLER_MODE_STATUS,
-        CONF_DEFAULTS: binary_sensor_defaults(icon = ICON_COMPRESSOR)
+        CONF_DEFAULTS: binary_sensor_defaults(icon = ICON_DEFROST)
     },
     0x4067: {
         NASA_LABEL: "ENUM_IN_3WAY_VALVE",
