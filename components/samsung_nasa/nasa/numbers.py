@@ -104,7 +104,7 @@ numbers = {
     0x4247: {
         NASA_LABEL: "VAR_IN_TEMP_WATER_OUTLET_TARGET_F",
         NASA_MODE: CONTROLLER_MODE_CONTROL,
-        CONF_DATA: cmd_numeric_data(15, 55),
+        CONF_DATA: cmd_numeric_data(25, 70, 0.5), #25 70 EHS HT model, 15 55 EHS
         CONF_DEFAULTS: temperature_defaults()
     },
     0x42D7: {
